@@ -14,31 +14,19 @@
   "watch": {
     "static": {
       "patterns": [
-        "src/static/**"
+        "static/**"
       ],
       "extensions": "html,css,png,gif,mp3,ttf,txt"
     },
-    "sprites": {
-      "patterns": [
-        "sprites/**"
-      ],
-      "extensions": "json,png,gif"
-    },
-    "music": {
-      "patterns": [
-        "music/**"
-      ],
-      "extensions": "mp3"
-    },
     "sass": {
       "patterns": [
-        "src/scss/**"
+        "scss/**"
       ],
       "extensions": "scss"
     },
     "webpack": {
       "patterns": [
-        "src/ts/**"
+        "ts/**"
       ],
       "extensions": "js,jsx,ts,tsx"
     }
