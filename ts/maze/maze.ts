@@ -5,59 +5,50 @@ export class Maze {
     width: number = 0;
     height: number = 0;
     // 2D array of nodes
-    nodes: (Node | undefined)[][] = [];
+    grid: Node[][] = [];
+    // Simple 1D array of nodes.
+    nodes: Node[] = [];
 
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
 
-        this.nodes = [];
+        this.grid = [];
         let i = 0;
-        for (let y = 0; y < height; y++) {
-            this.nodes[y] = [];
-            for (let x = 0; x < width; x++) {
-                this.nodes[y][x] = new Node(i, x, y);
+        for (let y = 0; y < this.height; y++) {
+            this.grid[y] = [];
+            for (let x = 0; x < this.width; x++) {
+                const node = new Node(i, x, y);
+                this.grid[y][x] = node;
+                this.nodes.push(node);
                 i++;
             }
         }
-    }
 
-    generateMaze() {
-        // Just randomly connect nodes to start with
+        // Add all the neighbors
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                const node = this.nodes[y][x]!;
-
-                const neighbors = [
-                    this.nodes[y - 1]?.[x],
-                    this.nodes[y + 1]?.[x],
-                    this.nodes[y]?.[x - 1],
-                    this.nodes[y]?.[x + 1],
-                ].filter((node) => node !== undefined) as Node[];
-
-                const randomIndex = Math.floor(Math.random() * neighbors.length);
-                const randomNeighbor = neighbors[randomIndex];
-                node.linkNeighbor(randomNeighbor);
+                for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) {
+                    const neighbor = this.grid[y + dy]?.[x + dx];
+                    if (neighbor === undefined) {
+                        continue;
+                    }
+                    this.grid[y][x]!.neighbors.push(neighbor);
+                }
             }
         }
     }
 
     render(context: CanvasRenderingContext2D) {
-        const mazeRenderInfo = {
-            fillWidth: 18,
-            lineWidth: 2,
-            spacing: 22,
-        };
+        const fillWidth = 18;
+        const lineWidth = 2;
+        const spacing = 22;
 
-        for (const row of this.nodes) {
-            for (const node of row) {
-                node?.renderOutline(context, mazeRenderInfo);
-            }
+        for (const node of this.nodes) {
+            node?.render(context, { spacing, thickness: fillWidth + lineWidth, color: 'black' });
         }
-        for (const row of this.nodes) {
-            for (const node of row) {
-                node?.renderFill(context, mazeRenderInfo);
-            }
+        for (const node of this.nodes) {
+            node?.render(context, { spacing, thickness: fillWidth, color: 'white' });
         }
     }
 }

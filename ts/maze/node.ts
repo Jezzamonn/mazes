@@ -5,6 +5,7 @@ export class Node {
     x: number = 0;
     y: number = 0;
     neighbors: Node[] = [];
+    connections: Node[] = [];
 
     constructor(index: number, x: number, y: number) {
         this.index = index;
@@ -12,36 +13,24 @@ export class Node {
         this.y = y;
     }
 
-    linkNeighbor(node: Node) {
-        this.neighbors.push(node);
-        node.neighbors.push(this);
+    connect(node: Node) {
+        this.connections.push(node);
+        node.connections.push(this);
     }
 
-    renderOutline(context: CanvasRenderingContext2D, mazeRenderInfo: MazeRenderInfo) {
+    render(context: CanvasRenderingContext2D, mazeRenderInfo: MazeRenderInfo) {
         context.beginPath();
         context.lineCap = 'square';
-        context.lineWidth = mazeRenderInfo.fillWidth + mazeRenderInfo.lineWidth;
-        context.strokeStyle = 'black';
-        this.renderPaths(context, mazeRenderInfo);
-    }
+        context.lineWidth = mazeRenderInfo.thickness;
+        context.strokeStyle = mazeRenderInfo.color;
 
-    renderFill(context: CanvasRenderingContext2D, mazeRenderInfo: MazeRenderInfo) {
-        context.beginPath();
-        context.lineCap = 'square';
-        context.lineWidth = mazeRenderInfo.fillWidth;
-        context.strokeStyle = 'white';
-        this.renderPaths(context, mazeRenderInfo);
-    }
-
-    renderPaths(context: CanvasRenderingContext2D, mazeRenderInfo: MazeRenderInfo) {
-        for (const neighbor of this.neighbors) {
-            if (neighbor.index < this.index) {
+        for (const connection of this.connections) {
+            if (connection.index < this.index) {
                 continue;
             }
             context.moveTo(this.x * mazeRenderInfo.spacing + mazeRenderInfo.spacing, this.y * mazeRenderInfo.spacing + mazeRenderInfo.spacing);
-            context.lineTo(neighbor.x * mazeRenderInfo.spacing + mazeRenderInfo.spacing, neighbor.y * mazeRenderInfo.spacing + mazeRenderInfo.spacing);
+            context.lineTo(connection.x * mazeRenderInfo.spacing + mazeRenderInfo.spacing, connection.y * mazeRenderInfo.spacing + mazeRenderInfo.spacing);
         }
         context.stroke();
     }
-
 }

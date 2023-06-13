@@ -1,5 +1,5 @@
 export interface MazeRenderInfo {
-    fillWidth: number;
-    lineWidth: number;
+    thickness: number;
     spacing: number;
+    color: string;
 }
