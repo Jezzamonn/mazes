@@ -1,4 +1,4 @@
-import { generateBinaryMaze } from "./maze/generators/binary";
+import { GrowingTreeGenerator } from "./maze/generators/growing-tree";
 import { Maze } from "./maze/maze";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
@@ -7,7 +7,9 @@ function main() {
     const context = canvas.getContext('2d')!;
 
     const maze = new Maze(10, 10);
-    generateBinaryMaze(maze);
+
+    const generator = new GrowingTreeGenerator();
+    generator.generate(maze);
 
     maze.render(context);
 
