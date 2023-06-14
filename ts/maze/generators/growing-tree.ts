@@ -33,23 +33,26 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
             return;
         }
 
-        const index = this.selectNode(this.toVisit);
-        const node = this.toVisit[index];
+        while (!this.isDone(maze)) {
+            const index = this.selectNode(this.toVisit);
+            const node = this.toVisit[index];
 
-        const possibleConnections = node.neighbors.filter(
-            (n) => !this.inMaze.has(n)
-        );
-        if (possibleConnections.length === 0) {
-            // This node has no unvisited neighbors. Remove it from the list.
-            this.toVisit.splice(index, 1);
-            return;
+            const possibleConnections = node.neighbors.filter(
+                (n) => !this.inMaze.has(n)
+            );
+            if (possibleConnections.length === 0) {
+                // This node has no unvisited neighbors. Remove it from the list.
+                this.toVisit.splice(index, 1);
+                continue;
+            }
+
+            const connection = choose(possibleConnections, Math.random);
+            node.connect(connection);
+            this.inMaze.add(connection);
+
+            this.toVisit.push(connection);
+            break;
         }
-
-        const connection = choose(possibleConnections, Math.random);
-        node.connect(connection);
-        this.inMaze.add(connection);
-
-        this.toVisit.push(connection);
     }
 
     isDone(maze: Maze): boolean {

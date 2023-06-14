@@ -3,6 +3,7 @@ import { BinaryMazeGenerator } from "./maze/generators/binary";
 import { BranchingMazeGenerator, BreadthFirstGenerator, DepthFirstGenerator, RandomGrowingTreeGenerator } from "./maze/generators/growing-tree";
 import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { MazeGenerator } from "./maze/generators/maze-generator";
+import { RandomConnector } from "./maze/generators/random-connect";
 import { Maze } from "./maze/maze";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
@@ -14,6 +15,7 @@ let generatorFunctions = [
     () => new BranchingMazeGenerator(2),
     () => new BranchingMazeGenerator(3),
     () => new HuntAndKillGenerator(),
+    () => new RandomConnector(),
 ]
 
 let currentGenerator: MazeGenerator;
