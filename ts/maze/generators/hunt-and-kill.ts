@@ -3,31 +3,46 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { MazeGenerator } from "./maze-generator";
 
-export class HuntAndKillGenerator implements MazeGenerator {
+export class HuntAndKillGenerator extends MazeGenerator {
+    inMaze: Set<Node> = new Set();
+    current: Node | undefined;
 
-    generate(maze: Maze): void {
-        const inMaze = new Set<Node>();
-        let current: Node | undefined = maze.nodes[0];
-        inMaze.add(current);
+    iterate(maze: Maze): void {
+        if (this.isDone(maze)) {
+            return;
+        }
 
-        while (true) {
-            const possibleConnections = current!.neighbors.filter(
-                (n) => !inMaze.has(n)
-            );
-            if (possibleConnections.length === 0) {
-                // We've hit a dead end. Time to hunt!
-                current = this.findNewStart(maze, inMaze);
-                if (current === null) {
-                    // We're done!
-                    return;
-                }
-                continue;
-            }
+        if (this.current == undefined) {
+            this.current = maze.nodes[0];
+            this.inMaze.add(this.current);
+            return;
+        }
 
+        const possibleConnections = this.current!.neighbors.filter(
+            (n) => !this.inMaze.has(n)
+        );
+        if (possibleConnections.length > 0) {
             const connection = choose(possibleConnections, Math.random);
-            current!.connect(connection);
-            inMaze.add(connection);
-            current = connection;
+            this.current!.connect(connection);
+            this.inMaze.add(connection);
+            this.current = connection;
+        }
+        else {
+            // We've hit a dead end. Time to hunt!
+            this.current = this.findNewStart(maze, this.inMaze);
+
+            if (this.current != undefined) {
+                // Connect this new start to the maze.
+                const inMazeNeighbors = this.current.neighbors.filter((n) =>
+                    this.inMaze.has(n)
+                );
+                this.current.connect(choose(inMazeNeighbors, Math.random));
+                this.inMaze.add(this.current);
+            }
+            // If this.current is undefined, then the generation is complete. In
+            // this implementation, the check happens in isDone(). If this was
+            // written in one loop, we could end the loop here.
+            return;
         }
     }
 
@@ -48,5 +63,10 @@ export class HuntAndKillGenerator implements MazeGenerator {
         return undefined;
     }
 
-
+    isDone(maze: Maze): boolean {
+        // The algoirithm finishes when current is undefined. But given the way we
+        // structured the code, we also need to check that we've started! So we
+        // also check that inMaze is not empty.
+        return this.current == undefined && this.inMaze.size > 0;
+    }
 }

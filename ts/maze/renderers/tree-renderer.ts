@@ -33,9 +33,9 @@ export class TreeRenderer {
     }
 
     render(context: CanvasRenderingContext2D) {
-        const fillWidth = 15;
-        const lineWidth = 2;
-        const spacing = 22;
+        const fillWidth = 8;
+        const lineWidth = 1.5;
+        const spacing = 12;
 
         // Shift things so it's centered.
         context.translate(
