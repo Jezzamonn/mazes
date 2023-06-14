@@ -39,6 +39,21 @@ export class Maze {
         }
     }
 
+    isFullyConnected(): boolean {
+        const inMaze = new Set<Node>();
+        const toVisit = [this.nodes[0]];
+        while (toVisit.length > 0) {
+            const node = toVisit.pop()!;
+            inMaze.add(node);
+            for (const connection of node.connections) {
+                if (!inMaze.has(connection)) {
+                    toVisit.push(connection);
+                }
+            }
+        }
+        return inMaze.size === this.nodes.length;
+    }
+
     render(context: CanvasRenderingContext2D) {
         const fillWidth = 18;
         const lineWidth = 2;
