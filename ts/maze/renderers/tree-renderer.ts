@@ -4,6 +4,7 @@ import { Node } from "../node";
 // Build a tree from a maze and render it to a canvas.
 export class TreeRenderer {
     root: TreeNode;
+    nodes: TreeNode[] = [];
 
     constructor(root: Node) {
         // Create a tree from the maze.
@@ -12,6 +13,7 @@ export class TreeRenderer {
         this.root = new TreeNode(root);
         this.root.depth = 0;
         visited.add(root);
+        this.nodes.push(this.root);
 
         const queue = [this.root];
         while (queue.length > 0) {
@@ -25,11 +27,14 @@ export class TreeRenderer {
                 node.children.push(child);
 
                 visited.add(connection);
+                this.nodes.push(this.root);
+
                 queue.push(child);
             }
         }
 
         this.root.calculateTreeLayout();
+        this.root.setAbsolutePosition(0, 0);
     }
 
     render(context: CanvasRenderingContext2D) {
@@ -71,6 +76,10 @@ export class TreeNode {
     // node. Excluding this node, as it'll always be 0.
     rightEdge: number[] | undefined;
 
+    // The absolute position of this node.
+    x: number | undefined;
+    y: number | undefined;
+
     constructor(mazeNode: Node) {
         this.mazeNode = mazeNode;
     }
@@ -82,6 +91,22 @@ export class TreeNode {
         }
         this.calculatePositionOfChildren();
         this.calculateEdges();
+    }
+
+    /** Sets the absolution position of this node and its descendants */
+    setAbsolutePosition(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+
+        for (let c = 0; c < this.children.length; c++) {
+            const child = this.children[c];
+            const childPosition = this.childPositions[c]!;
+
+            child.setAbsolutePosition(
+                x + childPosition,
+                y + 1
+            );
+        }
     }
 
     // Calculate the position of each child node. This spaces out the nodes so
@@ -161,37 +186,22 @@ export class TreeNode {
      */
     render(
         context: CanvasRenderingContext2D,
-        mazeRenderInfo: MazeRenderInfo,
-        x: number = 0,
-        y: number = 0
+        mazeRenderInfo: MazeRenderInfo
     ) {
         context.lineCap = 'round';
         context.lineWidth = mazeRenderInfo.thickness;
         context.strokeStyle = mazeRenderInfo.color;
 
         context.beginPath();
-        for (let c = 0; c < this.children.length; c++) {
-            const childPosition = this.childPositions[c]!;
-
+        for (const child of this.children) {
             // Draw a line from this node to the child.
-            context.moveTo(x, y);
-            context.lineTo(
-                x + childPosition * mazeRenderInfo.spacing,
-                y + mazeRenderInfo.spacing
-            );
+            context.moveTo(this.x! * mazeRenderInfo.spacing, this.y! * mazeRenderInfo.spacing);
+            context.lineTo(child.x! * mazeRenderInfo.spacing, child.y! * mazeRenderInfo.spacing);
         }
         context.stroke();
 
-        for (let c = 0; c < this.children.length; c++) {
-            const child = this.children[c];
-            const childPosition = this.childPositions[c]!;
-
-            child.render(
-                context,
-                mazeRenderInfo,
-                x + childPosition * mazeRenderInfo.spacing,
-                y + mazeRenderInfo.spacing
-            );
+        for (const child of this.children) {
+            child.render(context, mazeRenderInfo);
         }
     }
 }

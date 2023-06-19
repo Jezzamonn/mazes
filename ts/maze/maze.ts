@@ -1,3 +1,4 @@
+import { MazeGenerator } from "./generators/maze-generator";
 import { Node } from "./node";
 
 export class Maze {
@@ -52,18 +53,5 @@ export class Maze {
             }
         }
         return inMaze.size === this.nodes.length;
-    }
-
-    render(context: CanvasRenderingContext2D) {
-        const fillWidth = 18;
-        const lineWidth = 2;
-        const spacing = 22;
-
-        for (const node of this.nodes) {
-            node?.render(context, { spacing, thickness: fillWidth + lineWidth, color: 'black' });
-        }
-        for (const node of this.nodes) {
-            node?.render(context, { spacing, thickness: fillWidth, color: 'white' });
-        }
     }
 }

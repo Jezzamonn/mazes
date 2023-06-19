@@ -17,20 +17,4 @@ export class Node {
         this.connections.push(node);
         node.connections.push(this);
     }
-
-    render(context: CanvasRenderingContext2D, mazeRenderInfo: MazeRenderInfo) {
-        context.beginPath();
-        context.lineCap = 'square';
-        context.lineWidth = mazeRenderInfo.thickness;
-        context.strokeStyle = mazeRenderInfo.color;
-
-        for (const connection of this.connections) {
-            if (connection.index < this.index) {
-                continue;
-            }
-            context.moveTo(this.x * mazeRenderInfo.spacing + mazeRenderInfo.spacing, this.y * mazeRenderInfo.spacing + mazeRenderInfo.spacing);
-            context.lineTo(connection.x * mazeRenderInfo.spacing + mazeRenderInfo.spacing, connection.y * mazeRenderInfo.spacing + mazeRenderInfo.spacing);
-        }
-        context.stroke();
-    }
 }

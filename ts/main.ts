@@ -6,6 +6,7 @@ import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomConnector } from "./maze/generators/random-connect";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
 import { Maze } from "./maze/maze";
+import { Renderer } from "./maze/renderers/renderer";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
 let generatorFunctions = [
@@ -77,12 +78,13 @@ async function generateMaze(generator: MazeGenerator) {
         context.resetTransform();
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        maze.render(context);
+        const mazeRenderer = new Renderer();
+        mazeRenderer.render(context, maze, generator);
 
         const renderer = new TreeRenderer(maze.nodes[0]);
         renderer.render(context);
 
-        await wait(0.1);
+        await wait(0.01);
     }
 }
 
