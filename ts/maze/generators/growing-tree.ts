@@ -91,6 +91,17 @@ export class BranchingMazeGenerator extends GrowingTreeGenerator {
     }
 
     selectNode(nodes: Node[]): number {
-        return Math.max(0, nodes.length - this.branches);
+        // This used to be this:
+        //
+        // return Math.max(0, nodes.length - this.branches);
+        //
+        // but it has trouble moving through tight spaces when the maze is
+        // almost full, as it never picks the most recently placed node.
+
+        if (nodes.length <= this.branches) {
+            return nodes.length - 1;
+        }
+
+        return nodes.length - this.branches;
     }
 }
