@@ -22,41 +22,32 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
     */
     abstract selectNode(nodes: Node[]): number;
 
-    iterate(maze: Maze): void {
-        if (this.isDone(maze)) {
-            return;
+    * generate(maze: Maze): Generator<void> {
+        const toVisit = [maze.nodes[0]];
+        const inMaze = new Set(toVisit);
+
+        // Another slight nuance would be to store the node and potential
+        // connection in the toVisit array. But for now we'll just pick a random
+        // connection from that node.
+        while (toVisit.length > 0) {
+            yield;
+            const index = this.selectNode(toVisit);
+            const node = toVisit[index];
+
+            const possibleConnections = node.neighbors.filter(
+                (n) => !inMaze.has(n)
+            );
+            if (possibleConnections.length === 0) {
+                toVisit.splice(index, 1);
+                continue;
+            }
+
+            const connection = choose(possibleConnections, Math.random);
+            node.connect(connection);
+            inMaze.add(connection);
+
+            toVisit.push(connection);
         }
-
-        if (this.inMaze.size === 0) {
-            this.toVisit.push(maze.nodes[0]);
-            this.inMaze.add(maze.nodes[0]);
-            return;
-        }
-
-        const index = this.selectNode(this.toVisit);
-        const node = this.toVisit[index];
-
-        const possibleConnections = node.neighbors.filter(
-            (n) => !this.inMaze.has(n)
-        );
-        if (possibleConnections.length === 0) {
-            // This node has no unvisited neighbors. Remove it from the list.
-            this.toVisit.splice(index, 1);
-            return;
-        }
-
-        const connection = choose(possibleConnections, Math.random);
-        node.connect(connection);
-        this.inMaze.add(connection);
-
-        this.toVisit.push(connection);
-    }
-
-    isDone(maze: Maze): boolean {
-        // The algoirithm finishes when toVisit is empty. But given the way we
-        // structured the code, we also need to check that we've started! So we
-        // also check that inMaze is not empty.
-        return this.toVisit.length === 0 && this.inMaze.size > 0;
     }
 
     getNodeColor(node: Node): string {

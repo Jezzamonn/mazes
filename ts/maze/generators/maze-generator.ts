@@ -2,18 +2,10 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 
 export abstract class MazeGenerator {
-    /** Does a single iteration of the maze generation algorithm. */
-    abstract iterate(maze: Maze): void;
 
-    /** Whether the maze generator is complete. */
-    abstract isDone(maze: Maze): boolean;
-
-    /** Generates the whole maze. */
-    generate(maze: Maze): void {
-        while (!this.isDone(maze)) {
-            this.iterate(maze);
-        }
-    }
+    /** Generates a maze using a JavaScript generator, which allows for the code
+     * to be paused so we can animate it. */
+    abstract generate(maze: Maze): Generator<void>;
 
     /**
      * Implementations can use this to color things like the current node, or
