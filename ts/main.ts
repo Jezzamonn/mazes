@@ -2,6 +2,7 @@ import { wait } from "./lib/util";
 import { BinaryMazeGenerator } from "./maze/generators/binary";
 import { BranchingMazeGenerator, BreadthFirstGenerator, DepthFirstGenerator, RandomGrowingTreeGenerator } from "./maze/generators/growing-tree";
 import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
+import { LoopErasedWalkGenerator } from "./maze/generators/loop-erased-walk";
 import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomConnector } from "./maze/generators/random-connect";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
@@ -19,6 +20,7 @@ let generatorFunctions = [
     () => new HuntAndKillGenerator(),
     () => new RandomConnector(),
     () => new RandomWalkGenerator(),
+    () => new LoopErasedWalkGenerator(), 
 ]
 
 let currentGenerator: MazeGenerator;
