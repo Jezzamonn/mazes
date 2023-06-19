@@ -84,7 +84,7 @@ async function generateMaze(generator: MazeGenerator) {
         const renderer = new TreeRenderer(maze.nodes[0]);
         renderer.render(context);
 
-        await wait(0.01);
+        await wait(0.05);
     }
 }
 

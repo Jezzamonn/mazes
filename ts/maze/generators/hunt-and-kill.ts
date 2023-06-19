@@ -69,4 +69,11 @@ export class HuntAndKillGenerator extends MazeGenerator {
         // also check that inMaze is not empty.
         return this.current == undefined && this.inMaze.size > 0;
     }
+
+    getNodeColor(node: Node): string {
+        if (this.current === node) {
+            return "yellow";
+        }
+        return "white";
+    }
 }

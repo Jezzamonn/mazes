@@ -33,26 +33,23 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
             return;
         }
 
-        while (!this.isDone(maze)) {
-            const index = this.selectNode(this.toVisit);
-            const node = this.toVisit[index];
+        const index = this.selectNode(this.toVisit);
+        const node = this.toVisit[index];
 
-            const possibleConnections = node.neighbors.filter(
-                (n) => !this.inMaze.has(n)
-            );
-            if (possibleConnections.length === 0) {
-                // This node has no unvisited neighbors. Remove it from the list.
-                this.toVisit.splice(index, 1);
-                continue;
-            }
-
-            const connection = choose(possibleConnections, Math.random);
-            node.connect(connection);
-            this.inMaze.add(connection);
-
-            this.toVisit.push(connection);
-            break;
+        const possibleConnections = node.neighbors.filter(
+            (n) => !this.inMaze.has(n)
+        );
+        if (possibleConnections.length === 0) {
+            // This node has no unvisited neighbors. Remove it from the list.
+            this.toVisit.splice(index, 1);
+            return;
         }
+
+        const connection = choose(possibleConnections, Math.random);
+        node.connect(connection);
+        this.inMaze.add(connection);
+
+        this.toVisit.push(connection);
     }
 
     isDone(maze: Maze): boolean {
@@ -60,6 +57,13 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
         // structured the code, we also need to check that we've started! So we
         // also check that inMaze is not empty.
         return this.toVisit.length === 0 && this.inMaze.size > 0;
+    }
+
+    getNodeColor(node: Node): string {
+        if (this.toVisit.includes(node)) {
+            return "lightgreen";
+        }
+        return "white";
     }
 }
 

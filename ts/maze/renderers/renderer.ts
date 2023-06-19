@@ -30,6 +30,13 @@ export class Renderer {
                 color: "white",
             });
         }
+        for (const node of maze.nodes) {
+            this.renderNodeColor(context, node, {
+                spacing,
+                thickness: fillWidth,
+                color: generator.getNodeColor(node)
+            });
+        }
 
         context.restore();
     }
@@ -63,8 +70,7 @@ export class Renderer {
     renderNodeColor(
         context: CanvasRenderingContext2D,
         node: Node,
-        mazeRenderInfo: MazeRenderInfo,
-        generator: MazeGenerator
+        mazeRenderInfo: MazeRenderInfo
     ) {
         context.fillStyle = mazeRenderInfo.color;
         context.fillRect(

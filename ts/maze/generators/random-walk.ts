@@ -35,4 +35,10 @@ export class RandomWalkGenerator extends MazeGenerator {
         return this.inMaze.size >= maze.nodes.length;
     }
 
+    getNodeColor(node: Node): string {
+        if (this.current === node) {
+            return "yellow";
+        }
+        return "white";
+    }
 }
