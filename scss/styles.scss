@@ -1,4 +1,14 @@
 html, body {
     margin: 0;
     overflow: hidden;
+
+    // Use sans-serif fonts
+    font-family: sans-serif;
+}
+
+.canvas {
+    // A thin outline around the canvas
+    border: 1px solid #cdcdcd;
+    // Also some margin around the canvas
+    margin: 10px;
 }

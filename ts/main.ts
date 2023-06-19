@@ -4,6 +4,7 @@ import { BranchingMazeGenerator, BreadthFirstGenerator, DepthFirstGenerator, Ran
 import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomConnector } from "./maze/generators/random-connect";
+import { RandomWalkGenerator } from "./maze/generators/random-walk";
 import { Maze } from "./maze/maze";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
@@ -16,6 +17,7 @@ let generatorFunctions = [
     () => new BranchingMazeGenerator(3),
     () => new HuntAndKillGenerator(),
     () => new RandomConnector(),
+    () => new RandomWalkGenerator(),
 ]
 
 let currentGenerator: MazeGenerator;
@@ -49,8 +51,14 @@ async function main() {
 }
 
 function startGeneratingMaze() {
-    const generatorFunction = generatorFunctions[currentGeneratorIndex];
-    generateMaze(generatorFunction());
+    const generator = generatorFunctions[currentGeneratorIndex]();
+
+    // Update the algorthm name here too.
+    // TODO: Figure out how to represent parameters to the algorithm.
+    const algorithmNameElem = document.querySelector('.algorithm-name')!;
+    algorithmNameElem.textContent = generator.constructor.name;
+
+    generateMaze(generator);
 }
 
 async function generateMaze(generator: MazeGenerator) {
