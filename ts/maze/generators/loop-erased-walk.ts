@@ -6,74 +6,62 @@ import { MazeGenerator } from "./maze-generator";
 export class LoopErasedWalkGenerator extends MazeGenerator {
 
     inMaze: Set<Node> = new Set();
-    current: Node | undefined;
 
-    // The path we're currently walking on. This will be updated as we walk,
-    // and any loops will be erased.
-    currentPath: Node[] = [];
+    * generate(maze: Maze): Generator<void> {
+        // Pick a random node for the start.
+        const start = choose(maze.nodes, Math.random);
+        this.inMaze.add(start);
+        yield;
 
-    iterate(maze: Maze): void {
-        if (this.isDone(maze)) {
-            return;
-        }
-
-        if (this.inMaze.size == 0) {
-            // Pick a random node for the start.
-            const start = choose(maze.nodes, Math.random);
-            this.inMaze.add(start);
-            return;
-        }
-
-        if (this.current == undefined) {
-            // Pick random unvisited node for the position to be in.
-
-            // Fun fact: The algorithm remains unbiased no matter how we choose
-            // the unvisited node.
+        while (true) {
             const notInMaze = maze.nodes.filter((n) => !this.inMaze.has(n));
-            this.current = choose(notInMaze, Math.random);
-            this.currentPath.push(this.current);
-            return;
-        }
+            if (notInMaze.length == 0) {
+                // Every node is in the maze. We're done!
+                return;
+            }
+            // Pick random unvisited node for the position to be in.
+            // According to Wikipedia: The algorithm remains unbiased no matter
+            // how we choose the unvisited node.
+            let current = choose(notInMaze, Math.random);
+            // The path we're currently walking on. This will be updated as we walk,
+            // and any loops will be erased.
+            const currentPath = [current];
 
-        // Pick a random neighbor to move to.
-        const neighbor = choose(this.current.neighbors, Math.random);
-        if (this.inMaze.has(neighbor)) {
-            this.currentPath.push(neighbor);
-            // We reached the maze. Add everything in the current path to the
-            // maze, and start a new path.
-            for (let i = 0; i < this.currentPath.length - 1; i++) {
-                this.inMaze.add(this.currentPath[i]);
-                this.currentPath[i].connect(this.currentPath[i + 1]);
+            // Walk until we hit the maze. This may take a while the first time it runs.
+            while (true) {
+                const neighbor = choose(current.neighbors, Math.random);
+                if (this.inMaze.has(neighbor)) {
+                    // We hit the maze. Stop walking.
+                    currentPath.push(neighbor);
+                    break;
+                }
+                // Otherwise, check if this neighbor is in the current path.
+                const indexInPath = currentPath.indexOf(neighbor);
+                if (indexInPath >= 0) {
+                    // We've looped back to a previous node. Erase the loop.
+                    currentPath.splice(indexInPath);
+                }
+                // Continue walking.
+                currentPath.push(neighbor);
+                current = neighbor;
             }
 
-            this.currentPath = [];
-            this.current = undefined;
-            return;
+            // We reached the maze. Add everything in the current path.
+            for (let i = 0; i < currentPath.length - 1; i++) {
+                this.inMaze.add(currentPath[i]);
+                currentPath[i].connect(currentPath[i + 1]);
+            }
         }
-
-        // Otherwise, check if this neighbor is in the current path.
-        const indexInPath = this.currentPath.indexOf(neighbor);
-        if (indexInPath >= 0) {
-            // We've looped back to a previous node. Erase the loop.
-            this.currentPath = this.currentPath.slice(0, indexInPath);
-        }
-
-        this.currentPath.push(neighbor);
-        this.current = neighbor;
     }
 
-    isDone(maze: Maze): boolean {
-        return this.inMaze.size >= maze.nodes.length;
-    }
-
-    getNodeColor(node: Node): string {
-        if (this.current === node) {
-            return "yellow";
-        }
-        if (this.currentPath.includes(node)) {
-            return "lightgreen";
-        }
-        return "white";
-    }
+    // getNodeColor(node: Node): string {
+    //     if (this.current === node) {
+    //         return "yellow";
+    //     }
+    //     if (this.currentPath.includes(node)) {
+    //         return "lightgreen";
+    //     }
+    //     return "white";
+    // }
 
 }

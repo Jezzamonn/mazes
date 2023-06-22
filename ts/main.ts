@@ -4,7 +4,6 @@ import { BranchingMazeGenerator, BreadthFirstGenerator, DepthFirstGenerator, Ran
 import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { LoopErasedWalkGenerator } from "./maze/generators/loop-erased-walk";
 import { MazeGenerator } from "./maze/generators/maze-generator";
-import { RandomConnector } from "./maze/generators/random-connect";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
 import { Maze } from "./maze/maze";
 import { Renderer } from "./maze/renderers/renderer";
@@ -18,9 +17,8 @@ let generatorFunctions = [
     () => new BranchingMazeGenerator(2),
     () => new BranchingMazeGenerator(3),
     () => new HuntAndKillGenerator(),
-    () => new RandomConnector(),
     () => new RandomWalkGenerator(),
-    () => new LoopErasedWalkGenerator(), 
+    () => new LoopErasedWalkGenerator(),
 ]
 
 let currentGenerator: MazeGenerator;
@@ -72,11 +70,11 @@ async function generateMaze(generator: MazeGenerator) {
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d')!;
 
+    const it = generator.generate(maze);
+
     // `currentGenerator == generator` allows this loop to be interrupted when
     // this function is called for a different generator.
-    while (currentGenerator == generator && !generator.isDone(maze)) {
-        generator.iterate(maze);
-
+    while (generator == currentGenerator && it.next().done == false) {
         context.resetTransform();
         context.clearRect(0, 0, canvas.width, canvas.height);
 
