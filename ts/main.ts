@@ -27,6 +27,15 @@ let currentGeneratorIndex = 0;
 async function main() {
     startGeneratingMaze();
 
+    if (window.devicePixelRatio > 1) {
+        // If the device has a high pixel ratio, scale up the canvas.
+        const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
+        canvas.width *= window.devicePixelRatio;
+        canvas.height *= window.devicePixelRatio;
+        canvas.style.width = `${canvas.width / window.devicePixelRatio}px`;
+        canvas.style.height = `${canvas.height / window.devicePixelRatio}px`;
+    }
+
     window.addEventListener('keydown', (event) => {
         switch (event.key) {
             case 'ArrowLeft':
@@ -76,7 +85,11 @@ async function generateMaze(generator: MazeGenerator) {
     // this function is called for a different generator.
     while (generator == currentGenerator && it.next().done == false) {
         context.resetTransform();
-        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = '#DDD';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Scale by pixel ratio.
+        context.scale(window.devicePixelRatio, window.devicePixelRatio);
 
         const mazeRenderer = new Renderer();
         mazeRenderer.render(context, maze, generator);

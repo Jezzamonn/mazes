@@ -44,7 +44,7 @@ export class TreeRenderer {
 
         // Shift things so it's centered.
         context.translate(
-            context.canvas.width / 2, 20);
+            0.75 * context.canvas.clientWidth, 20);
 
         this.root.render(context, {
             spacing,
