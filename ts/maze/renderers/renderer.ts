@@ -1,3 +1,4 @@
+import { lerp } from "../../lib/util";
 import { MazeGenerator } from "../generators/maze-generator";
 import { Maze } from "../maze";
 import { MazeRenderInfo } from "../maze-render-info";
@@ -17,51 +18,50 @@ export class Renderer {
         context.translate(spacing, spacing);
 
         for (const node of maze.nodes) {
-            this.renderNodeConnections(context, node, {
+            this.renderNode(context, node, {
                 spacing,
                 thickness: fillWidth + lineWidth,
                 color: "black",
             });
         }
         for (const node of maze.nodes) {
-            this.renderNodeConnections(context, node, {
+            this.renderNode(context, node, {
                 spacing,
                 thickness: fillWidth,
-                color: "white",
-            });
-        }
-        for (const node of maze.nodes) {
-            this.renderNodeColor(context, node, {
-                spacing,
-                thickness: fillWidth,
-                color: generator.getNodeColor(node)
+                color: generator.getNodeColor(node),
             });
         }
 
         context.restore();
     }
 
-    renderNodeConnections(
+    // Renders the base color of the node, along with half of the lines to the other nodes.
+    renderNode(context: CanvasRenderingContext2D, node: Node, mazeRenderInfo: MazeRenderInfo) {
+        // First draw the connections
+        this.renderHalfConnections(context, node, mazeRenderInfo);
+        this.renderNodeColor(context, node, mazeRenderInfo);
+    }
+
+    renderHalfConnections(
         context: CanvasRenderingContext2D,
         node: Node,
         mazeRenderInfo: MazeRenderInfo
     ) {
         context.beginPath();
-        context.lineCap = "square";
+        context.lineCap = "butt";
         context.lineWidth = mazeRenderInfo.thickness;
         context.strokeStyle = mazeRenderInfo.color;
 
         for (const connection of node.connections) {
-            if (connection.index < node.index) {
-                continue;
-            }
+            const destX = lerp(node.x, connection.x, 0.501);
+            const destY = lerp(node.y, connection.y, 0.501);
             context.moveTo(
                 node.x * mazeRenderInfo.spacing,
                 node.y * mazeRenderInfo.spacing
             );
             context.lineTo(
-                connection.x * mazeRenderInfo.spacing,
-                connection.y * mazeRenderInfo.spacing
+                destX * mazeRenderInfo.spacing,
+                destY * mazeRenderInfo.spacing
             );
         }
         context.stroke();
@@ -72,12 +72,20 @@ export class Renderer {
         node: Node,
         mazeRenderInfo: MazeRenderInfo
     ) {
+        context.beginPath();
         context.fillStyle = mazeRenderInfo.color;
-        context.fillRect(
-            node.x * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
-            node.y * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
-            mazeRenderInfo.thickness,
-            mazeRenderInfo.thickness
+        // context.fillRect(
+        //     node.x * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
+        //     node.y * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
+        //     mazeRenderInfo.thickness,
+        //     mazeRenderInfo.thickness
+        // );
+        context.arc(
+            node.x * mazeRenderInfo.spacing,
+            node.y * mazeRenderInfo.spacing,
+            mazeRenderInfo.thickness / 2,
+            0, 2 * Math.PI
         );
+        context.fill();
     }
 }
