@@ -5,6 +5,8 @@ import { MazeGenerator } from "./maze-generator";
 
 export class LoopErasedWalkGenerator extends MazeGenerator {
 
+    current: Node | undefined;
+    currentPath: Node[] = [];
     inMaze: Set<Node> = new Set();
 
     * generate(maze: Maze): Generator<void> {
@@ -22,46 +24,50 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
             // Pick random unvisited node for the position to be in.
             // According to Wikipedia: The algorithm remains unbiased no matter
             // how we choose the unvisited node.
-            let current = choose(notInMaze, Math.random);
+            this.current = choose(notInMaze, Math.random);
             // The path we're currently walking on. This will be updated as we walk,
             // and any loops will be erased.
-            const currentPath = [current];
+            this.currentPath = [this.current];
+            yield;
 
             // Walk until we hit the maze. This may take a while the first time it runs.
             while (true) {
-                const neighbor = choose(current.neighbors, Math.random);
+                const neighbor = choose(this.current!.neighbors, Math.random);
                 if (this.inMaze.has(neighbor)) {
                     // We hit the maze. Stop walking.
-                    currentPath.push(neighbor);
+                    this.currentPath.push(neighbor);
+                    yield;
                     break;
                 }
                 // Otherwise, check if this neighbor is in the current path.
-                const indexInPath = currentPath.indexOf(neighbor);
+                const indexInPath = this.currentPath.indexOf(neighbor);
                 if (indexInPath >= 0) {
                     // We've looped back to a previous node. Erase the loop.
-                    currentPath.splice(indexInPath);
+                    this.currentPath.splice(indexInPath);
                 }
                 // Continue walking.
-                currentPath.push(neighbor);
-                current = neighbor;
+                this.currentPath.push(neighbor);
+                this.current = neighbor;
+                yield;
             }
 
             // We reached the maze. Add everything in the current path.
-            for (let i = 0; i < currentPath.length - 1; i++) {
-                this.inMaze.add(currentPath[i]);
-                currentPath[i].connect(currentPath[i + 1]);
+            for (let i = 0; i < this.currentPath.length - 1; i++) {
+                this.inMaze.add(this.currentPath[i]);
+                this.currentPath[i].connect(this.currentPath[i + 1]);
+                yield;
             }
         }
     }
 
-    // getNodeColor(node: Node): string {
-    //     if (this.current === node) {
-    //         return "yellow";
-    //     }
-    //     if (this.currentPath.includes(node)) {
-    //         return "lightgreen";
-    //     }
-    //     return "white";
-    // }
+    getNodeColor(node: Node): string {
+        if (this.current === node) {
+            return "yellow";
+        }
+        if (this.currentPath.includes(node)) {
+            return "lightgreen";
+        }
+        return "white";
+    }
 
 }

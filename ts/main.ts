@@ -81,9 +81,7 @@ async function generateMaze(generator: MazeGenerator) {
 
     const it = generator.generate(maze);
 
-    // `currentGenerator == generator` allows this loop to be interrupted when
-    // this function is called for a different generator.
-    while (generator == currentGenerator && it.next().done == false) {
+    function renderMaze() {
         context.resetTransform();
         context.fillStyle = '#DDD';
         context.fillRect(0, 0, canvas.width, canvas.height);
@@ -96,9 +94,16 @@ async function generateMaze(generator: MazeGenerator) {
 
         const renderer = new TreeRenderer(maze.nodes[0]);
         renderer.render(context);
+    }
 
+    // `currentGenerator == generator` allows this loop to be interrupted when
+    // this function is called for a different generator.
+    while (generator == currentGenerator && it.next().done == false) {
+        renderMaze();
         await wait(0.05);
     }
+
+    renderMaze();
 }
 
 window.onload = main;

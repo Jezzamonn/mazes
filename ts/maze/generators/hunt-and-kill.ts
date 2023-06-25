@@ -12,7 +12,7 @@ export class HuntAndKillGenerator extends MazeGenerator {
         this.inMaze.add(this.current);
         yield;
 
-        while (this.current != undefined) {
+        while (true) {
             const possibleConnections = this.current!.neighbors.filter(
                 (n) => !this.inMaze.has(n)
             );
@@ -21,6 +21,7 @@ export class HuntAndKillGenerator extends MazeGenerator {
                 this.current!.connect(connection);
                 this.inMaze.add(connection);
                 this.current = connection;
+                yield;
             } else {
                 // We've hit a dead end. Time to hunt!
                 this.current = this.findNewStart(maze, this.inMaze);
@@ -32,11 +33,12 @@ export class HuntAndKillGenerator extends MazeGenerator {
                     );
                     this.current.connect(choose(inMazeNeighbors, Math.random));
                     this.inMaze.add(this.current);
+                    yield;
                 }
-                // If this.current is undefined, then the generation is complete. In
-                // this implementation, the check happens in isDone(). If this was
-                // written in one loop, we could end the loop here.
-                break;;
+                else {
+                    // If this.current is undefined, then the generation is complete.
+                    break;
+                }
             }
         }
     }
