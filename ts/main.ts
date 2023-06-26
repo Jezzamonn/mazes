@@ -98,9 +98,9 @@ async function generateMaze(generator: MazeGenerator) {
 
     // `currentGenerator == generator` allows this loop to be interrupted when
     // this function is called for a different generator.
-    while (generator == currentGenerator && it.next().done == false) {
+    while (it.next().done == false && generator == currentGenerator) {
         renderMaze();
-        await wait(0.05);
+        await wait(0.5);
     }
 
     renderMaze();

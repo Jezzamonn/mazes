@@ -19,7 +19,7 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
             const notInMaze = maze.nodes.filter((n) => !this.inMaze.has(n));
             if (notInMaze.length == 0) {
                 // Every node is in the maze. We're done!
-                return;
+                break;
             }
             // Pick random unvisited node for the position to be in.
             // According to Wikipedia: The algorithm remains unbiased no matter
@@ -32,22 +32,21 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
 
             // Walk until we hit the maze. This may take a while the first time it runs.
             while (true) {
-                const neighbor = choose(this.current!.neighbors, Math.random);
-                if (this.inMaze.has(neighbor)) {
+                this.current = choose(this.current!.neighbors, Math.random);
+                if (this.inMaze.has(this.current)) {
                     // We hit the maze. Stop walking.
-                    this.currentPath.push(neighbor);
+                    this.currentPath.push(this.current);
                     yield;
                     break;
                 }
                 // Otherwise, check if this neighbor is in the current path.
-                const indexInPath = this.currentPath.indexOf(neighbor);
+                const indexInPath = this.currentPath.indexOf(this.current);
                 if (indexInPath >= 0) {
                     // We've looped back to a previous node. Erase the loop.
                     this.currentPath.splice(indexInPath);
                 }
                 // Continue walking.
-                this.currentPath.push(neighbor);
-                this.current = neighbor;
+                this.currentPath.push(this.current);
                 yield;
             }
 
@@ -58,6 +57,9 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
                 yield;
             }
         }
+
+        this.current = undefined;
+        this.currentPath = [];
     }
 
     getNodeColor(node: Node): string {
