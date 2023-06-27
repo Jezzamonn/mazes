@@ -3,6 +3,7 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
+import { rng } from "./rng";
 
 export class LoopErasedWalkGenerator extends MazeGenerator {
 
@@ -25,7 +26,7 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
             // Pick random unvisited node for the position to be in.
             // According to Wikipedia: The algorithm remains unbiased no matter
             // how we choose the unvisited node.
-            this.current = choose(notInMaze, Math.random);
+            this.current = choose(notInMaze, rng);
             // The path we're currently walking on. This will be updated as we walk,
             // and any loops will be erased.
             this.currentPath = [this.current];
@@ -33,7 +34,7 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
 
             // Walk until we hit the maze. This may take a while the first time it runs.
             while (true) {
-                this.current = choose(this.current!.neighbors, Math.random);
+                this.current = choose(this.current!.neighbors, rng);
                 if (this.inMaze.has(this.current)) {
                     // We hit the maze. Stop walking.
                     this.currentPath.push(this.current);
@@ -81,7 +82,7 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
 
     getStartNode(maze: Maze): Node {
         if (this.startNode == undefined) {
-            this.startNode = choose(maze.nodes, Math.random);
+            this.startNode = choose(maze.nodes, rng);
         }
         return this.startNode;
     }

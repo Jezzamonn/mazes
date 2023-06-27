@@ -3,6 +3,7 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
+import { rng } from "./rng";
 
 export class RandomWalkGenerator extends MazeGenerator {
 
@@ -17,7 +18,7 @@ export class RandomWalkGenerator extends MazeGenerator {
 
         while (this.inMaze.size < maze.nodes.length) {
             // Pick a random neighbor to move to. All neighbors are fair game.
-            const neighbor = choose(this.current!.neighbors, Math.random);
+            const neighbor = choose(this.current!.neighbors, rng);
             // If this neighbor isn't already in the maze, connect it to the current one.
             if (!this.inMaze.has(neighbor)) {
                 this.current!.connect(neighbor);
@@ -41,7 +42,7 @@ export class RandomWalkGenerator extends MazeGenerator {
 
     getStartNode(maze: Maze): Node {
         if (this.startNode == undefined) {
-            this.startNode = choose(maze.nodes, Math.random);
+            this.startNode = choose(maze.nodes, rng);
         }
         return this.startNode;
     }

@@ -19,7 +19,7 @@ export class Node {
     }
 
     disconnect(node: Node) {
-        this.connections.splice(this.connections.indexOf(node), 1);
-        node.connections.splice(node.connections.indexOf(this), 1);
+        this.connections = this.connections.filter((n) => n !== node);
+        node.connections = node.connections.filter((n) => n !== this);
     }
 }

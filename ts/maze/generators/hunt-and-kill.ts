@@ -3,6 +3,7 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
+import { rng } from "./rng";
 
 export class HuntAndKillGenerator extends MazeGenerator {
     inMaze: Set<Node> = new Set();
@@ -18,7 +19,7 @@ export class HuntAndKillGenerator extends MazeGenerator {
                 (n) => !this.inMaze.has(n)
             );
             if (possibleConnections.length > 0) {
-                const connection = choose(possibleConnections, Math.random);
+                const connection = choose(possibleConnections, rng);
                 this.current!.connect(connection);
                 this.inMaze.add(connection);
                 this.current = connection;
@@ -32,7 +33,7 @@ export class HuntAndKillGenerator extends MazeGenerator {
                     const inMazeNeighbors = this.current.neighbors.filter((n) =>
                         this.inMaze.has(n)
                     );
-                    this.current.connect(choose(inMazeNeighbors, Math.random));
+                    this.current.connect(choose(inMazeNeighbors, rng));
                     this.inMaze.add(this.current);
                     yield;
                 }

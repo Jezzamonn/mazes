@@ -3,6 +3,7 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
+import { rng } from "./rng";
 
 export class BinaryMazeGenerator extends MazeGenerator {
 
@@ -20,7 +21,7 @@ export class BinaryMazeGenerator extends MazeGenerator {
             // Turns out filtering by the index is all we need to do this!
             const possibleConnections = node.neighbors.filter(n => n.index < node.index);
             if (possibleConnections.length > 0) {
-                const connection = choose(possibleConnections, Math.random);
+                const connection = choose(possibleConnections, rng);
                 node.connect(connection);
 
                 this.inMaze.add(connection);

@@ -3,6 +3,7 @@ import { Maze } from "../maze";
 import { Node } from "../node";
 import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
+import { rng } from "./rng";
 
 /**
  * The order we pick to visit changes the vibe of the mazes that are
@@ -44,7 +45,7 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
                 continue;
             }
 
-            const connection = choose(possibleConnections, Math.random);
+            const connection = choose(possibleConnections, rng);
             node.connect(connection);
             this.inMaze.add(connection);
 
@@ -64,7 +65,7 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
 
     getStartNode(maze: Maze): Node {
         if (this.startNode == undefined) {
-            this.startNode = choose(maze.nodes, Math.random);
+            this.startNode = choose(maze.nodes, rng);
         }
         return this.startNode;
     }
@@ -84,7 +85,7 @@ export class BreadthFirstGenerator extends GrowingTreeGenerator {
 
 export class RandomGrowingTreeGenerator extends GrowingTreeGenerator {
     selectNode(nodes: Node[]): number {
-        return Math.floor(Math.random() * nodes.length);
+        return Math.floor(rng() * nodes.length);
     }
 }
 

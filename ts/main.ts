@@ -5,11 +5,13 @@ import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { LoopErasedWalkGenerator } from "./maze/generators/loop-erased-walk";
 import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
+import { SubdivisionGenerator } from "./maze/generators/subdivision";
 import { Maze } from "./maze/maze";
 import { Renderer } from "./maze/renderers/renderer";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
 let generatorFunctions = [
+    () => new SubdivisionGenerator(),
     () => new BinaryMazeGenerator(),
     () => new DepthFirstGenerator(),
     () => new BreadthFirstGenerator(),
@@ -99,9 +101,9 @@ async function generateMaze(generator: MazeGenerator) {
         }
     }
 
-    // `currentGenerator == generator` allows this loop to be interrupted when
+    // `currentGenerator === generator` allows this loop to be interrupted when
     // this function is called for a different generator.
-    while (it.next().done == false && generator == currentGenerator) {
+    while (it.next().done == false && generator === currentGenerator) {
         renderMaze();
         await wait(0.1);
     }
