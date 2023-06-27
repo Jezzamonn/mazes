@@ -1,6 +1,7 @@
 import { choose } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
+import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 
 export class LoopErasedWalkGenerator extends MazeGenerator {
@@ -36,6 +37,9 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
                 if (this.inMaze.has(this.current)) {
                     // We hit the maze. Stop walking.
                     this.currentPath.push(this.current);
+                    if (this.currentPath.length > 1) {
+                        this.currentPath[this.currentPath.length - 2].connect(this.current);
+                    }
                     yield;
                     break;
                 }
@@ -43,18 +47,31 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
                 const indexInPath = this.currentPath.indexOf(this.current);
                 if (indexInPath >= 0) {
                     // We've looped back to a previous node. Erase the loop.
+                    // Undo all the connecting we did.
+                    for (let i = Math.max(indexInPath - 1, 0); i < this.currentPath.length - 1; i++) {
+                        this.currentPath[i].disconnect(this.currentPath[i + 1]);
+                    }
                     this.currentPath.splice(indexInPath);
                 }
                 // Continue walking.
                 this.currentPath.push(this.current);
+                // Just for the sake of the visual we do the connecting here.
+                if (this.currentPath.length > 1) {
+                    this.currentPath[this.currentPath.length - 2].connect(this.current);
+                }
+
                 yield;
             }
 
             // We reached the maze. Add everything in the current path.
             for (let i = 0; i < this.currentPath.length - 1; i++) {
                 this.inMaze.add(this.currentPath[i]);
-                this.currentPath[i].connect(this.currentPath[i + 1]);
-                yield;
+                // It probably makes the most sense for the algorithm to
+                // connect the nodes here too. But we already connected them
+                // earlier so we don't need to do that here.
+
+                // this.currentPath[i].connect(this.currentPath[i + 1]);
+                // yield;
             }
         }
 
@@ -62,14 +79,17 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
         this.currentPath = [];
     }
 
-    getNodeColor(node: Node): string {
+    getNodeColor(node: Node): Color {
         if (this.current === node) {
-            return "yellow";
+            return Color.Yellow;
+        }
+        if (this.inMaze.has(node)) {
+            return Color.White;
         }
         if (this.currentPath.includes(node)) {
-            return "lightgreen";
+            return Color.Green;
         }
-        return "white";
+        return Color.Transparent;
     }
 
 }

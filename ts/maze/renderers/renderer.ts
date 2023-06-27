@@ -3,6 +3,7 @@ import { MazeGenerator } from "../generators/maze-generator";
 import { Maze } from "../maze";
 import { MazeRenderInfo } from "../maze-render-info";
 import { Node } from "../node";
+import { getFillColor, getLineColor } from "./colors";
 
 export class Renderer {
     render(
@@ -18,17 +19,22 @@ export class Renderer {
         context.translate(spacing, spacing);
 
         for (const node of maze.nodes) {
+            const color = generator.getNodeColor(node);
+            const lineColor = getLineColor(color);
+
             this.renderNode(context, node, {
                 spacing,
                 thickness: fillWidth + lineWidth,
-                color: "black",
+                color: lineColor,
             });
         }
         for (const node of maze.nodes) {
+            const color = generator.getNodeColor(node);
+            const fillColor = getFillColor(color);
             this.renderNode(context, node, {
                 spacing,
                 thickness: fillWidth,
-                color: generator.getNodeColor(node),
+                color: fillColor,
             });
         }
 
@@ -74,18 +80,18 @@ export class Renderer {
     ) {
         context.beginPath();
         context.fillStyle = mazeRenderInfo.color;
-        // context.fillRect(
-        //     node.x * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
-        //     node.y * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
-        //     mazeRenderInfo.thickness,
-        //     mazeRenderInfo.thickness
-        // );
-        context.arc(
-            node.x * mazeRenderInfo.spacing,
-            node.y * mazeRenderInfo.spacing,
-            mazeRenderInfo.thickness / 2,
-            0, 2 * Math.PI
+        context.fillRect(
+            node.x * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
+            node.y * mazeRenderInfo.spacing - mazeRenderInfo.thickness / 2,
+            mazeRenderInfo.thickness,
+            mazeRenderInfo.thickness
         );
-        context.fill();
+        // context.arc(
+        //     node.x * mazeRenderInfo.spacing,
+        //     node.y * mazeRenderInfo.spacing,
+        //     mazeRenderInfo.thickness / 2,
+        //     0, 2 * Math.PI
+        // );
+        // context.fill();
     }
 }

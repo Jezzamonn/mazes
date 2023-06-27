@@ -17,4 +17,9 @@ export class Node {
         this.connections.push(node);
         node.connections.push(this);
     }
+
+    disconnect(node: Node) {
+        this.connections.splice(this.connections.indexOf(node), 1);
+        node.connections.splice(node.connections.indexOf(this), 1);
+    }
 }

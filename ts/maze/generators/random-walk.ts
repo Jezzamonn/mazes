@@ -1,25 +1,27 @@
 import { choose } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
+import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 
 export class RandomWalkGenerator extends MazeGenerator {
 
     current: Node | undefined;
+    inMaze: Set<Node>;
 
     *generate(maze: Maze): Generator<void> {
         // Pick a random node for the start.
         this.current = choose(maze.nodes, Math.random);
-        const inMaze = new Set<Node>([this.current]);
+        this.inMaze = new Set<Node>([this.current]);
         yield;
 
-        while (inMaze.size < maze.nodes.length) {
+        while (this.inMaze.size < maze.nodes.length) {
             // Pick a random neighbor to move to. All neighbors are fair game.
             const neighbor = choose(this.current!.neighbors, Math.random);
             // If this neighbor isn't already in the maze, connect it to the current one.
-            if (!inMaze.has(neighbor)) {
+            if (!this.inMaze.has(neighbor)) {
                 this.current!.connect(neighbor);
-                inMaze.add(neighbor);
+                this.inMaze.add(neighbor);
             }
             // Move to the neighbor.
             this.current = neighbor;
@@ -27,10 +29,13 @@ export class RandomWalkGenerator extends MazeGenerator {
         }
     }
 
-    getNodeColor(node: Node): string {
+    getNodeColor(node: Node): Color {
         if (this.current === node) {
-            return "yellow";
+            return Color.Yellow;
         }
-        return "white";
+        if (this.inMaze.has(node)) {
+            return Color.White;
+        }
+        return Color.Transparent;
     }
 }

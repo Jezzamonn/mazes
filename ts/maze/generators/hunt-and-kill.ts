@@ -1,6 +1,7 @@
 import { choose } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
+import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 
 export class HuntAndKillGenerator extends MazeGenerator {
@@ -60,10 +61,13 @@ export class HuntAndKillGenerator extends MazeGenerator {
         return undefined;
     }
 
-    getNodeColor(node: Node): string {
+    getNodeColor(node: Node): Color {
         if (this.current === node) {
-            return "yellow";
+            return Color.Yellow;
         }
-        return "white";
+        if (this.inMaze.has(node)) {
+            return Color.White;
+        }
+        return Color.Transparent;
     }
 }

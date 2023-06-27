@@ -100,7 +100,7 @@ async function generateMaze(generator: MazeGenerator) {
     // this function is called for a different generator.
     while (it.next().done == false && generator == currentGenerator) {
         renderMaze();
-        await wait(0.5);
+        await wait(0.1);
     }
 
     renderMaze();

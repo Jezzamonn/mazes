@@ -1,5 +1,6 @@
 import { Maze } from "../maze";
 import { Node } from "../node";
+import { Color } from "../renderers/colors";
 
 export abstract class MazeGenerator {
 
@@ -11,7 +12,7 @@ export abstract class MazeGenerator {
      * Implementations can use this to color things like the current node, or
      * nodes that are in different sets.
      */
-    getNodeColor(node: Node): string {
-        return "white";
+    getNodeColor(node: Node): Color {
+        return Color.White;
     }
 }

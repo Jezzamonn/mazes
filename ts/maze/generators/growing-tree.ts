@@ -1,6 +1,7 @@
 import { choose } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
+import { Color } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 
 /**
@@ -50,11 +51,14 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
         }
     }
 
-    getNodeColor(node: Node): string {
+    getNodeColor(node: Node): Color {
         if (this.toVisit.includes(node)) {
-            return "lightgreen";
+            return Color.Green;
         }
-        return "white";
+        if (this.inMaze.has(node)) {
+            return Color.White;
+        }
+        return Color.Transparent;
     }
 }
 
