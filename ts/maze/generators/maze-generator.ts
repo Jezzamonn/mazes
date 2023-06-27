@@ -15,4 +15,8 @@ export abstract class MazeGenerator {
     getNodeColor(node: Node): Color {
         return Color.White;
     }
+
+    getStartNode(maze: Maze): Node | undefined {
+        return maze.nodes[0];
+    }
 }

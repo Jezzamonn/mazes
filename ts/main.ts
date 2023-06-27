@@ -92,8 +92,11 @@ async function generateMaze(generator: MazeGenerator) {
         const mazeRenderer = new Renderer();
         mazeRenderer.render(context, maze, generator);
 
-        const renderer = new TreeRenderer(maze.nodes[0]);
-        renderer.render(context);
+        const startNode = generator.getStartNode(maze);
+        if (startNode) {
+            const renderer = new TreeRenderer(startNode);
+            renderer.render(context);
+        }
     }
 
     // `currentGenerator == generator` allows this loop to be interrupted when

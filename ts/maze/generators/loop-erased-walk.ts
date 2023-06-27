@@ -9,11 +9,11 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
     current: Node | undefined;
     currentPath: Node[] = [];
     inMaze: Set<Node> = new Set();
+    startNode: Node | undefined;
 
     * generate(maze: Maze): Generator<void> {
         // Pick a random node for the start.
-        const start = choose(maze.nodes, Math.random);
-        this.inMaze.add(start);
+        this.inMaze.add(this.getStartNode(maze));
         yield;
 
         while (true) {
@@ -77,6 +77,13 @@ export class LoopErasedWalkGenerator extends MazeGenerator {
 
         this.current = undefined;
         this.currentPath = [];
+    }
+
+    getStartNode(maze: Maze): Node {
+        if (this.startNode == undefined) {
+            this.startNode = choose(maze.nodes, Math.random);
+        }
+        return this.startNode;
     }
 
     getNodeColor(node: Node): Color {

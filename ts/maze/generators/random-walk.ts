@@ -8,10 +8,10 @@ export class RandomWalkGenerator extends MazeGenerator {
 
     current: Node | undefined;
     inMaze: Set<Node>;
+    startNode: Node | undefined;
 
     *generate(maze: Maze): Generator<void> {
-        // Pick a random node for the start.
-        this.current = choose(maze.nodes, Math.random);
+        this.current = this.getStartNode(maze);
         this.inMaze = new Set<Node>([this.current]);
         yield;
 
@@ -37,5 +37,12 @@ export class RandomWalkGenerator extends MazeGenerator {
             return Color.White;
         }
         return Color.Transparent;
+    }
+
+    getStartNode(maze: Maze): Node {
+        if (this.startNode == undefined) {
+            this.startNode = choose(maze.nodes, Math.random);
+        }
+        return this.startNode;
     }
 }

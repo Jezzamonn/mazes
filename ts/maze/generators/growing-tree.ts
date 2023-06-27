@@ -17,6 +17,7 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
 
     toVisit: Node[] = [];
     inMaze: Set<Node> = new Set();
+    startNode: Node | undefined;
 
     /**
      * Returns the index of the next node to try to add a new connection from.
@@ -24,7 +25,7 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
     abstract selectNode(nodes: Node[]): number;
 
     * generate(maze: Maze): Generator<void> {
-        this.toVisit = [maze.nodes[0]];
+        this.toVisit = [this.getStartNode(maze)];
         this.inMaze = new Set(this.toVisit);
 
         // Another slight nuance would be to store the node and potential
@@ -59,6 +60,13 @@ abstract class GrowingTreeGenerator extends MazeGenerator {
             return Color.White;
         }
         return Color.Transparent;
+    }
+
+    getStartNode(maze: Maze): Node {
+        if (this.startNode == undefined) {
+            this.startNode = choose(maze.nodes, Math.random);
+        }
+        return this.startNode;
     }
 }
 
