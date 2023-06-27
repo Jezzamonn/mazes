@@ -21,37 +21,43 @@ export class SubdivisionGenerator extends MazeGenerator {
             }
         }
 
-        const toSplit = [bounds];
+        this.toSplit = [bounds];
         yield;
 
-        while (toSplit.length > 0) {
-            const section = toSplit.pop()!;
+        while (this.toSplit.length > 0) {
+            const section = this.toSplit.pop()!;
             this.currentBounds = section;
             const newSections = yield* this.splitSection(maze, section);
-            toSplit.push(...newSections);
+            this.toSplit.push(...newSections);
             yield;
         }
+        this.currentBounds = undefined;
     }
 
     *splitSection(maze: Maze, bounds: Bounds): Generator<void, Bounds[]> {
-        const possibleSplits = (bounds.width - 1) + (bounds.height - 1);
-        // No more splitting can be done!
-        if (possibleSplits === 0) {
+        if (bounds.width == 1 || bounds.height == 1) {
+            // No more splitting can be done!
             return [];
         }
+        const possibleSplits = (bounds.width - 1) + (bounds.height - 1);
         // Choose a random split
         const splitIndex = Math.floor(rng() * possibleSplits);
         if (splitIndex < bounds.width - 1) {
             // Split horizontally
             const splitX = bounds.minX! + splitIndex;
+            // Position of the connection two subdivisions
+            const connectionY = bounds.minY! + Math.floor(rng() * bounds.height);
+
             for (let y = bounds.minY!; y <= bounds.maxY!; y++) {
+                // Skip the nodes we want to stay connected.
+                if (y === connectionY) {
+                    continue;
+                }
                 const leftNode = maze.grid[y][splitX];
                 const rightNode = maze.grid[y][splitX + 1];
                 leftNode.disconnect(rightNode);
                 yield;
             }
-            // Connect a random node between the two subdivisions
-            const connectionY = bounds.minY! + Math.floor(rng() * bounds.height);
             const leftNode = maze.grid[connectionY][splitX];
             const rightNode = maze.grid[connectionY][splitX + 1];
             leftNode.connect(rightNode);
@@ -62,18 +68,19 @@ export class SubdivisionGenerator extends MazeGenerator {
         else {
             // Split vertically
             const splitY = bounds.minY! + splitIndex - (bounds.width - 1);
+            // Position of the connection two subdivisions
+            const connectionX = bounds.minX! + Math.floor(rng() * bounds.width);
+
             for (let x = bounds.minX!; x <= bounds.maxX!; x++) {
+                // Skip the nodes we want to stay connected.
+                if (x === connectionX) {
+                    continue;
+                }
                 const topNode = maze.grid[splitY][x];
                 const bottomNode = maze.grid[splitY + 1][x];
                 topNode.disconnect(bottomNode);
                 yield;
             }
-            // Connect a random node between the two subdivisions
-            const connectionX = bounds.minX! + Math.floor(rng() * bounds.width);
-            const topNode = maze.grid[splitY][connectionX];
-            const bottomNode = maze.grid[splitY + 1][connectionX];
-            topNode.connect(bottomNode);
-            yield;
 
             return bounds.splitAtY(splitY);
         }
@@ -81,6 +88,9 @@ export class SubdivisionGenerator extends MazeGenerator {
 
     getNodeColor(node: Node): Color {
         if (this.currentBounds?.contains(node.x, node.y) ?? false) {
+            return Color.Yellow;
+        }
+        if (this.toSplit.some(b => b.contains(node.x, node.y))) {
             return Color.Green;
         }
         return Color.White;
