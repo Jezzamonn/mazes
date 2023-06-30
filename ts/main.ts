@@ -5,13 +5,13 @@ import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { LoopErasedWalkGenerator } from "./maze/generators/loop-erased-walk";
 import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
+import { SetJoiningGenerator } from "./maze/generators/set-joining";
 import { SubdivisionGenerator } from "./maze/generators/subdivision";
 import { Maze } from "./maze/maze";
 import { Renderer } from "./maze/renderers/renderer";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
 
 let generatorFunctions = [
-    () => new SubdivisionGenerator(),
     () => new BinaryMazeGenerator(),
     () => new DepthFirstGenerator(),
     () => new BreadthFirstGenerator(),
@@ -21,6 +21,8 @@ let generatorFunctions = [
     () => new HuntAndKillGenerator(),
     () => new RandomWalkGenerator(),
     () => new LoopErasedWalkGenerator(),
+    () => new SubdivisionGenerator(),
+    () => new SetJoiningGenerator(),
 ]
 
 let currentGenerator: MazeGenerator;
