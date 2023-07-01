@@ -48,6 +48,20 @@ export class SetJoiningGenerator extends MazeGenerator {
         if (this.comparedNodes?.map(n => this.sets?.get(n)?.has(node)).some(b => b ?? false)) {
             return Color.Green;
         }
+        // We can treat nodes that haven't been connected to anything as outside
+        // the maze. Not sure I like the visual effect of it though.
+        // if (node.connections.length == 0) {
+        //    return Color.Transparent;
+        // }
         return Color.White;
+    }
+
+    getStartNode(maze: Maze): Node | undefined {
+        if (this.sets == undefined) {
+            return undefined;
+        }
+        const largestSet = [...this.sets!.values()].reduce((a, b) => a.size > b.size ? a : b);
+        // The node with the first index within the largest set.
+        return [...largestSet].reduce((a, b) => a.index < b.index ? a : b);
     }
 }

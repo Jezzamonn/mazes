@@ -78,7 +78,7 @@ function startGeneratingMaze() {
 async function generateMaze(generator: MazeGenerator) {
     currentGenerator = generator;
 
-    const maze = new Maze(10, 10);
+    const maze = new Maze(30, 20);
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d')!;
@@ -107,7 +107,7 @@ async function generateMaze(generator: MazeGenerator) {
     // this function is called for a different generator.
     while (it.next().done == false && generator === currentGenerator) {
         renderMaze();
-        await wait(0.1);
+        await wait(0.01);
     }
 
     renderMaze();

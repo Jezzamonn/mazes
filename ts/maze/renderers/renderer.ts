@@ -11,9 +11,9 @@ export class Renderer {
         maze: Maze,
         generator: MazeGenerator
     ) {
-        const fillWidth = 18;
-        const lineWidth = 2;
-        const spacing = 22;
+        const fillWidth = 18 * 0.7;
+        const lineWidth = 2 * 0.7;
+        const spacing = 22 * 0.7;
 
         context.save();
         context.translate(spacing, spacing);
