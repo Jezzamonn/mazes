@@ -7,6 +7,7 @@ import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
 import { SetJoiningGenerator } from "./maze/generators/set-joining";
 import { SubdivisionGenerator } from "./maze/generators/subdivision";
+import { TessellateGenerator } from "./maze/generators/tesselate";
 import { Maze } from "./maze/maze";
 import { Renderer } from "./maze/renderers/renderer";
 import { TreeRenderer } from "./maze/renderers/tree-renderer";
@@ -23,6 +24,7 @@ let generatorFunctions = [
     () => new LoopErasedWalkGenerator(),
     () => new SubdivisionGenerator(),
     () => new SetJoiningGenerator(),
+    () => new TessellateGenerator(),
 ]
 
 let currentGenerator: MazeGenerator;
@@ -78,7 +80,7 @@ function startGeneratingMaze() {
 async function generateMaze(generator: MazeGenerator) {
     currentGenerator = generator;
 
-    const maze = new Maze(10, 10);
+    const maze = new Maze(40, 30);
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d')!;
@@ -94,30 +96,30 @@ async function generateMaze(generator: MazeGenerator) {
         context.scale(window.devicePixelRatio, window.devicePixelRatio);
 
         const mazeRenderer = new Renderer({
-            fillWidth: 18,
-            lineWidth: 2,
-            spacing: 22,
+            fillWidth: 18 * 0.7,
+            lineWidth: 2 * 0.7,
+            spacing: 22 * 0.7,
         });
         mazeRenderer.render(context, maze, generator);
 
-        const startNode = generator.getStartNode(maze);
-        if (startNode) {
-            const renderer = new TreeRenderer(startNode,
-                {
-                fillWidth: 5,
-                lineWidth: 1,
-                spacing: 8,
-                }
-            );
-            renderer.render(context);
-        }
+        // const startNode = generator.getStartNode(maze);
+        // if (startNode) {
+        //     const renderer = new TreeRenderer(startNode,
+        //         {
+        //         fillWidth: 5,
+        //         lineWidth: 1,
+        //         spacing: 8,
+        //         }
+        //     );
+        //     renderer.render(context);
+        // }
     }
 
     // `currentGenerator === generator` allows this loop to be interrupted when
     // this function is called for a different generator.
     while (it.next().done == false && generator === currentGenerator) {
         renderMaze();
-        await wait(0.1);
+        await wait(0.01);
     }
 
     renderMaze();
