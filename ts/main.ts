@@ -78,7 +78,7 @@ function startGeneratingMaze() {
 async function generateMaze(generator: MazeGenerator) {
     currentGenerator = generator;
 
-    const maze = new Maze(30, 20);
+    const maze = new Maze(10, 10);
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d')!;
@@ -93,12 +93,22 @@ async function generateMaze(generator: MazeGenerator) {
         // Scale by pixel ratio.
         context.scale(window.devicePixelRatio, window.devicePixelRatio);
 
-        const mazeRenderer = new Renderer();
+        const mazeRenderer = new Renderer({
+            fillWidth: 18,
+            lineWidth: 2,
+            spacing: 22,
+        });
         mazeRenderer.render(context, maze, generator);
 
         const startNode = generator.getStartNode(maze);
         if (startNode) {
-            const renderer = new TreeRenderer(startNode);
+            const renderer = new TreeRenderer(startNode,
+                {
+                fillWidth: 5,
+                lineWidth: 1,
+                spacing: 8,
+                }
+            );
             renderer.render(context);
         }
     }
@@ -107,7 +117,7 @@ async function generateMaze(generator: MazeGenerator) {
     // this function is called for a different generator.
     while (it.next().done == false && generator === currentGenerator) {
         renderMaze();
-        await wait(0.01);
+        await wait(0.1);
     }
 
     renderMaze();

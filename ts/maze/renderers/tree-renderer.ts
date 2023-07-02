@@ -1,12 +1,25 @@
-import { MazeRenderInfo } from "../maze-render-info";
+import { MazeRenderInfo } from "./maze-render-info";
 import { Node } from "../node";
 
 // Build a tree from a maze and render it to a canvas.
 export class TreeRenderer {
+
+    fillWidth: number;
+    lineWidth: number;
+    spacing: number;
+
     root: TreeNode;
     nodes: TreeNode[] = [];
 
-    constructor(root: Node) {
+    constructor(root: Node, {fillWidth, lineWidth, spacing}: {
+        fillWidth: number,
+        lineWidth: number,
+        spacing: number,
+    }) {
+        this.fillWidth = fillWidth;
+        this.lineWidth = lineWidth;
+        this.spacing = spacing;
+
         // Create a tree from the maze.
         const visited = new Set<Node>();
 
@@ -38,22 +51,18 @@ export class TreeRenderer {
     }
 
     render(context: CanvasRenderingContext2D) {
-        const fillWidth = 5;
-        const lineWidth = 1;
-        const spacing = 8;
-
         // Shift things so it's centered.
         context.translate(
             0.75 * context.canvas.clientWidth, 20);
 
         this.root.render(context, {
-            spacing,
-            thickness: fillWidth + lineWidth,
+            spacing: this.spacing,
+            thickness: this.fillWidth + this.lineWidth,
             color: "black",
         });
         this.root.render(context, {
-            spacing,
-            thickness: fillWidth,
+            spacing: this.spacing,
+            thickness: this.fillWidth,
             color: "white",
         });
     }

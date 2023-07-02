@@ -1,5 +1,3 @@
-import { MazeRenderInfo } from "./maze-render-info";
-
 export class Node {
     index: number = 0;
     x: number = 0;

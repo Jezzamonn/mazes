@@ -1,30 +1,39 @@
 import { lerp } from "../../lib/util";
 import { MazeGenerator } from "../generators/maze-generator";
 import { Maze } from "../maze";
-import { MazeRenderInfo } from "../maze-render-info";
+import { MazeRenderInfo } from "./maze-render-info";
 import { Node } from "../node";
 import { getFillColor, getLineColor } from "./colors";
 
 export class Renderer {
+    fillWidth: number;
+    lineWidth: number;
+    spacing: number;
+
+    constructor({fillWidth, lineWidth, spacing}: {
+        fillWidth: number,
+        lineWidth: number,
+        spacing: number,}) {
+            this.fillWidth = fillWidth;
+            this.lineWidth = lineWidth;
+            this.spacing = spacing;
+        }
+
     render(
         context: CanvasRenderingContext2D,
         maze: Maze,
         generator: MazeGenerator
     ) {
-        const fillWidth = 18 * 0.7;
-        const lineWidth = 2 * 0.7;
-        const spacing = 22 * 0.7;
-
         context.save();
-        context.translate(spacing, spacing);
+        context.translate(this.spacing, this.spacing);
 
         for (const node of maze.nodes) {
             const color = generator.getNodeColor(node);
             const lineColor = getLineColor(color);
 
             this.renderNode(context, node, {
-                spacing,
-                thickness: fillWidth + lineWidth,
+                spacing: this.spacing,
+                thickness: this.fillWidth + this.lineWidth,
                 color: lineColor,
             });
         }
@@ -32,8 +41,8 @@ export class Renderer {
             const color = generator.getNodeColor(node);
             const fillColor = getFillColor(color);
             this.renderNode(context, node, {
-                spacing,
-                thickness: fillWidth,
+                spacing: this.spacing,
+                thickness: this.fillWidth,
                 color: fillColor,
             });
         }
