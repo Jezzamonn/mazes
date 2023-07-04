@@ -1,6 +1,6 @@
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color } from "../renderers/colors";
+import { Color, Colors } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -43,17 +43,17 @@ export class SetJoiningGenerator extends MazeGenerator {
 
     getNodeColor(node: Node): Color {
         if (this.comparedNodes?.includes(node)) {
-            return Color.Yellow;
+            return Colors.Yellow;
         }
         if (this.comparedNodes?.map(n => this.sets?.get(n)?.has(node)).some(b => b ?? false)) {
-            return Color.Green;
+            return Colors.Green;
         }
         // We can treat nodes that haven't been connected to anything as outside
         // the maze. Not sure I like the visual effect of it though.
         // if (node.connections.length == 0) {
-        //    return Color.Transparent;
+        //    return Colors.Transparent;
         // }
-        return Color.White;
+        return Colors.White;
     }
 
     getStartNode(maze: Maze): Node | undefined {

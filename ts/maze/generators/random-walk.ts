@@ -1,7 +1,7 @@
 import { choose } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color } from "../renderers/colors";
+import { Color, Colors } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -32,12 +32,12 @@ export class RandomWalkGenerator extends MazeGenerator {
 
     getNodeColor(node: Node): Color {
         if (this.current === node) {
-            return Color.Yellow;
+            return Colors.Yellow;
         }
         if (this.inMaze.has(node)) {
-            return Color.White;
+            return Colors.White;
         }
-        return Color.Transparent;
+        return Colors.Transparent;
     }
 
     getStartNode(maze: Maze): Node {

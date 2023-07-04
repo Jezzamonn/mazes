@@ -1,7 +1,7 @@
 import { lerp } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color } from "../renderers/colors";
+import { Color, Colors } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -88,12 +88,12 @@ export class SubdivisionGenerator extends MazeGenerator {
 
     getNodeColor(node: Node): Color {
         if (this.currentBounds?.contains(node.x, node.y) ?? false) {
-            return Color.Yellow;
+            return Colors.Yellow;
         }
         if (this.toSplit.some(b => b.contains(node.x, node.y))) {
-            return Color.Green;
+            return Colors.Green;
         }
-        return Color.White;
+        return Colors.White;
     }
 }
 

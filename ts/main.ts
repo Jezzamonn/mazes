@@ -80,7 +80,7 @@ function startGeneratingMaze() {
 async function generateMaze(generator: MazeGenerator) {
     currentGenerator = generator;
 
-    const maze = new Maze(40, 30);
+    const maze = new Maze(16, 12);
 
     const canvas = document.querySelector('.canvas') as HTMLCanvasElement;
     const context = canvas.getContext('2d')!;
@@ -102,17 +102,17 @@ async function generateMaze(generator: MazeGenerator) {
         });
         mazeRenderer.render(context, maze, generator);
 
-        // const startNode = generator.getStartNode(maze);
-        // if (startNode) {
-        //     const renderer = new TreeRenderer(startNode,
-        //         {
-        //         fillWidth: 5,
-        //         lineWidth: 1,
-        //         spacing: 8,
-        //         }
-        //     );
-        //     renderer.render(context);
-        // }
+        const startNode = generator.getStartNode(maze);
+        if (startNode) {
+            const renderer = new TreeRenderer(startNode,
+                {
+                fillWidth: 5,
+                lineWidth: 1,
+                spacing: 8,
+                }
+            );
+            renderer.render(context);
+        }
     }
 
     // `currentGenerator === generator` allows this loop to be interrupted when

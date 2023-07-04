@@ -3,7 +3,6 @@ import { MazeGenerator } from "../generators/maze-generator";
 import { Maze } from "../maze";
 import { MazeRenderInfo } from "./maze-render-info";
 import { Node } from "../node";
-import { getFillColor, getLineColor } from "./colors";
 
 export class Renderer {
     fillWidth: number;
@@ -29,21 +28,19 @@ export class Renderer {
 
         for (const node of maze.nodes) {
             const color = generator.getNodeColor(node);
-            const lineColor = getLineColor(color);
 
             this.renderNode(context, node, {
                 spacing: this.spacing,
                 thickness: this.fillWidth + this.lineWidth,
-                color: lineColor,
+                color: color.lineColor,
             });
         }
         for (const node of maze.nodes) {
             const color = generator.getNodeColor(node);
-            const fillColor = getFillColor(color);
             this.renderNode(context, node, {
                 spacing: this.spacing,
                 thickness: this.fillWidth,
-                color: fillColor,
+                color: color.fillColor,
             });
         }
 

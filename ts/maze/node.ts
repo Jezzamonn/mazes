@@ -12,6 +12,9 @@ export class Node {
     }
 
     connect(node: Node) {
+        if (this.connections.includes(node)) {
+            return;
+        }
         this.connections.push(node);
         node.connections.push(this);
     }

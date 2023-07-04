@@ -1,6 +1,6 @@
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color } from "../renderers/colors";
+import { Color, Colors } from "../renderers/colors";
 
 export abstract class MazeGenerator {
 
@@ -13,7 +13,7 @@ export abstract class MazeGenerator {
      * nodes that are in different sets.
      */
     getNodeColor(node: Node): Color {
-        return Color.White;
+        return Colors.White;
     }
 
     getStartNode(maze: Maze): Node | undefined {
