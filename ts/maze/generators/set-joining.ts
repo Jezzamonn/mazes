@@ -22,15 +22,18 @@ export class SetJoiningGenerator extends MazeGenerator {
         for (const [a, b] of allPotentialConnections) {
             this.comparedNodes = [a, b];
             yield;
+            const aSet = this.sets.get(a)!;
+            const bSet = this.sets.get(b)!;
             // If a and b are in the same set, then connecting them would create a cycle.
-            if (this.sets.get(a) === this.sets.get(b)) {
+            if (aSet === bSet) {
                 continue;
             }
             // Otherwise, connect them.
             a.connect(b);
             // And merge the sets.
-            const mergedSet = this.sets.get(a)!;
-            const removedSet = this.sets.get(b)!;
+            // For the convenience of the algorithm, we'll merge the smaller set into the larger one.
+            const mergedSet = aSet.size > bSet.size ? aSet : bSet;
+            const removedSet = aSet.size > bSet.size ? bSet : aSet;
 
             for (const node of removedSet) {
                 mergedSet.add(node);
@@ -43,17 +46,26 @@ export class SetJoiningGenerator extends MazeGenerator {
 
     getNodeColor(node: Node): Color {
         if (this.comparedNodes?.includes(node)) {
-            return Colors.Yellow;
+            return Colors.White;
         }
-        if (this.comparedNodes?.map(n => this.sets?.get(n)?.has(node)).some(b => b ?? false)) {
-            return Colors.Green;
+        if (this.sets == undefined) {
+            return Colors.Transparent;
         }
-        // We can treat nodes that haven't been connected to anything as outside
-        // the maze. Not sure I like the visual effect of it though.
-        // if (node.connections.length == 0) {
-        //    return Colors.Transparent;
+        const set = this.sets.get(node);
+        if (set == undefined) {
+            return Colors.Transparent;
+        }
+        const hue = getSetHue(set);
+        return Colors.withHue(hue);
+        // if (this.comparedNodes?.map(n => this.sets?.get(n)?.has(node)).some(b => b ?? false)) {
+        //     return Colors.Green;
         // }
-        return Colors.White;
+        // // We can treat nodes that haven't been connected to anything as outside
+        // // the maze. Not sure I like the visual effect of it though.
+        // // if (node.connections.length == 0) {
+        // //    return Colors.Transparent;
+        // // }
+        // return Colors.White;
     }
 
     getStartNode(maze: Maze): Node | undefined {
@@ -64,4 +76,13 @@ export class SetJoiningGenerator extends MazeGenerator {
         // The node with the first index within the largest set.
         return [...largestSet].reduce((a, b) => a.index < b.index ? a : b);
     }
+}
+
+const setHues: Map<any, number> = new Map();
+
+function getSetHue(set: any): number {
+    if (!setHues.has(set)) {
+        setHues.set(set, rng());
+    }
+    return setHues.get(set)!;
 }
