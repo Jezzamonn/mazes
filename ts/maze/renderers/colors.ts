@@ -28,17 +28,21 @@ export const Colors = {
     }),
 }
 
-export class SetColorer {
-    setHues: Map<any, number> = new Map();
+export class ObjectColorer {
+    objectHues: Map<any, number> = new Map();
 
-    getSetHue(set: any): number {
-        if (!this.setHues.has(set)) {
-            this.setHues.set(set, rng());
+    getObjectHue(obj: any): number {
+        if (!this.objectHues.has(obj)) {
+            this.objectHues.set(obj, rng());
         }
-        return this.setHues.get(set)!;
+        return this.objectHues.get(obj)!;
     }
 
-    getSetColor(set: any): Color {
-        return Colors.withHue(this.getSetHue(set));
+    getObjectColor(obj: any): Color {
+        return Colors.withHue(this.getObjectHue(obj));
+    }
+
+    copyObjectColor(from: any, to: any) {
+        this.objectHues.set(to, this.getObjectHue(from));
     }
 }

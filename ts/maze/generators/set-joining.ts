@@ -1,6 +1,6 @@
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color, Colors, SetColorer } from "../renderers/colors";
+import { Color, Colors, ObjectColorer } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -9,7 +9,7 @@ export class SetJoiningGenerator extends MazeGenerator {
 
     sets: Map<Node, Set<Node>> | undefined;
     comparedNodes: [Node, Node] | undefined;
-    setColorer = new SetColorer();
+    setColorer = new ObjectColorer();
 
     * generate(maze: Maze): Generator<void> {
         // Start with each node in its own set.
@@ -53,7 +53,7 @@ export class SetJoiningGenerator extends MazeGenerator {
         if (set == undefined) {
             return Colors.Transparent;
         }
-        const color = this.setColorer.getSetColor(set);
+        const color = this.setColorer.getObjectColor(set);
 
         if (this.comparedNodes?.includes(node)) {
             return {

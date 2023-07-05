@@ -1,7 +1,7 @@
 import { lerp } from "../../lib/util";
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color, Colors, SetColorer } from "../renderers/colors";
+import { Color, Colors, ObjectColorer } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -10,7 +10,7 @@ export class RowByRowGenerator extends MazeGenerator {
 
     allRowSets: Array<Array<Set<Node> | undefined>> = [];
 
-    setColorer = new SetColorer();
+    setColorer = new ObjectColorer();
 
     *generate(maze: Maze): Generator<void> {
         const firstRowSets: Array<Set<Node>> = [];
@@ -82,6 +82,7 @@ export class RowByRowGenerator extends MazeGenerator {
             // Must have at least one connection.
             const numConnections = Math.floor(lerp(1, set.size, rng()));
             const moveDownSet = new Set<Node>();
+            this.setColorer.copyObjectColor(set, moveDownSet);
             // Randomly connect nodes down.
             const nodes = Array.from(set);
             for (let i = 0; i < numConnections; i++) {
@@ -118,7 +119,7 @@ export class RowByRowGenerator extends MazeGenerator {
             return Colors.Transparent;
         }
 
-        return this.setColorer.getSetColor(set);
+        return this.setColorer.getObjectColor(set);
 
     }
 }
