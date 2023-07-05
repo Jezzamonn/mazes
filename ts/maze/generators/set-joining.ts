@@ -45,9 +45,6 @@ export class SetJoiningGenerator extends MazeGenerator {
     }
 
     getNodeColor(node: Node): Color {
-        if (this.comparedNodes?.includes(node)) {
-            return Colors.White;
-        }
         if (this.sets == undefined) {
             return Colors.Transparent;
         }
@@ -56,7 +53,16 @@ export class SetJoiningGenerator extends MazeGenerator {
             return Colors.Transparent;
         }
         const hue = getSetHue(set);
-        return Colors.withHue(hue);
+        const color = Colors.withHue(hue);
+
+        if (this.comparedNodes?.includes(node)) {
+            return {
+                lineColor: 'white',
+                fillColor: color.fillColor
+            }
+        }
+        return color;
+
         // if (this.comparedNodes?.map(n => this.sets?.get(n)?.has(node)).some(b => b ?? false)) {
         //     return Colors.Green;
         // }
