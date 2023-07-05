@@ -5,6 +5,7 @@ import { HuntAndKillGenerator } from "./maze/generators/hunt-and-kill";
 import { LoopErasedWalkGenerator } from "./maze/generators/loop-erased-walk";
 import { MazeGenerator } from "./maze/generators/maze-generator";
 import { RandomWalkGenerator } from "./maze/generators/random-walk";
+import { RowByRowGenerator } from "./maze/generators/row-by-row";
 import { SetJoiningGenerator } from "./maze/generators/set-joining";
 import { SubdivisionGenerator } from "./maze/generators/subdivision";
 import { TessellateGenerator } from "./maze/generators/tesselate";
@@ -25,10 +26,11 @@ let generatorFunctions = [
     () => new SubdivisionGenerator(),
     () => new SetJoiningGenerator(),
     () => new TessellateGenerator(),
+    () => new RowByRowGenerator(),
 ]
 
 let currentGenerator: MazeGenerator;
-let currentGeneratorIndex = 0;
+let currentGeneratorIndex = generatorFunctions.length - 1;
 
 async function main() {
     startGeneratingMaze();
@@ -95,10 +97,11 @@ async function generateMaze(generator: MazeGenerator) {
         // Scale by pixel ratio.
         context.scale(window.devicePixelRatio, window.devicePixelRatio);
 
+        const scale = 2
         const mazeRenderer = new Renderer({
-            fillWidth: 18 * 0.7,
-            lineWidth: 2 * 0.7,
-            spacing: 22 * 0.7,
+            fillWidth: 18 * scale,
+            lineWidth: 2 * scale,
+            spacing: 22 * scale,
         });
         mazeRenderer.render(context, maze, generator);
 

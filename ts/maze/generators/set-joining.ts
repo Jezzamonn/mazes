@@ -1,6 +1,6 @@
 import { Maze } from "../maze";
 import { Node } from "../node";
-import { Color, Colors } from "../renderers/colors";
+import { Color, Colors, SetColorer } from "../renderers/colors";
 import { MazeGenerator } from "./maze-generator";
 import { rng } from "./rng";
 
@@ -9,6 +9,7 @@ export class SetJoiningGenerator extends MazeGenerator {
 
     sets: Map<Node, Set<Node>> | undefined;
     comparedNodes: [Node, Node] | undefined;
+    setColorer = new SetColorer();
 
     * generate(maze: Maze): Generator<void> {
         // Start with each node in its own set.
@@ -52,8 +53,7 @@ export class SetJoiningGenerator extends MazeGenerator {
         if (set == undefined) {
             return Colors.Transparent;
         }
-        const hue = getSetHue(set);
-        const color = Colors.withHue(hue);
+        const color = this.setColorer.getSetColor(set);
 
         if (this.comparedNodes?.includes(node)) {
             return {
@@ -82,13 +82,4 @@ export class SetJoiningGenerator extends MazeGenerator {
         // The node with the first index within the largest set.
         return [...largestSet].reduce((a, b) => a.index < b.index ? a : b);
     }
-}
-
-const setHues: Map<any, number> = new Map();
-
-function getSetHue(set: any): number {
-    if (!setHues.has(set)) {
-        setHues.set(set, rng());
-    }
-    return setHues.get(set)!;
 }

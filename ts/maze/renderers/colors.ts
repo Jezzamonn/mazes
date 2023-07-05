@@ -1,3 +1,5 @@
+import { rng } from "../generators/rng";
+
 export interface Color {
     fillColor: string;
     lineColor: string;
@@ -24,4 +26,19 @@ export const Colors = {
         fillColor: `hsl(${(hue * 360).toFixed(2)}, 100%, 80%)`,
         lineColor: 'black',//`hsl(${(hue * 100).toFixed(2)}%, 100%, 50%)`,
     }),
+}
+
+export class SetColorer {
+    setHues: Map<any, number> = new Map();
+
+    getSetHue(set: any): number {
+        if (!this.setHues.has(set)) {
+            this.setHues.set(set, rng());
+        }
+        return this.setHues.get(set)!;
+    }
+
+    getSetColor(set: any): Color {
+        return Colors.withHue(this.getSetHue(set));
+    }
 }
